@@ -1,0 +1,1294 @@
+<!doctype html>
+<!-- Momentum Martial Arts Members App -->
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=no"/>
+  <meta name="apple-mobile-web-app-capable" content="yes"/>
+  <meta name="theme-color" content="#0a0a0a"/>
+  <title>Momentum Martial Arts</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+  <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;600;700;800;900&family=Barlow:wght@400;500;600&display=swap" rel="stylesheet"/>
+  <script src="https://unpkg.com/react@18/umd/react.development.js" crossorigin></script>
+  <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js" crossorigin></script>
+  <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  /* ── Base surfaces ── */
+  --bg:#080808;
+  --bg2:#0f0f0f;
+  --card:#141414;
+  --elev:#1c1c1c;
+  --border:#252525;
+  --bsub:#181818;
+
+  /* ── Blue accent ── */
+  --accent:#3B82F6;
+  --accent-dark:#2563EB;
+  --adim:rgba(59,130,246,.14);
+  --aglow:rgba(59,130,246,.35);
+  --ahover:rgba(59,130,246,.22);
+
+  /* ── Comp team gold (special only) ── */
+  --gold:#D4A017;
+  --gdim:rgba(212,160,23,.16);
+  --gglow:rgba(212,160,23,.38);
+
+  /* ── Text ── */
+  --text:#F1F5F9;
+  --t2:#94A3B8;
+  --t3:#475569;
+  --t4:#2D3748;
+
+  /* ── Class type palette (blue-grey family) ── */
+  --mma:#3B82F6;    --mmabg:rgba(59,130,246,.13);
+  --bjj:#60A5FA;    --bjjbg:rgba(96,165,250,.13);
+  --mt:#94A3B8;     --mtbg:rgba(148,163,184,.12);
+  --box:#818CF8;    --boxbg:rgba(129,140,248,.13);
+  --fit:#34D399;    --fitbg:rgba(52,211,153,.12);
+  --kid:#7DD3FC;    --kidbg:rgba(125,211,252,.12);
+  --om:#64748B;     --ombg:rgba(100,116,139,.12);
+
+  --fd:'Barlow Condensed',sans-serif;
+  --fb:'Barlow',sans-serif;
+  --r1:8px;--r2:12px;--r3:16px;
+  --nh:72px;--hh:64px;
+}
+
+html,body,#root{height:100%;background:var(--bg);color:var(--text);font-family:var(--fb);-webkit-font-smoothing:antialiased;overscroll-behavior:none}
+button{font-family:var(--fb);cursor:pointer;border:none;background:none;color:inherit}
+a{color:inherit}
+input,textarea,select{font-family:var(--fb)}
+::-webkit-scrollbar{width:0;height:0}
+
+/* ── APP SHELL ── */
+.app{display:flex;flex-direction:column;height:100dvh;height:100vh;max-width:480px;margin:0 auto}
+.hdr{position:fixed;top:0;left:50%;transform:translateX(-50%);width:100%;max-width:480px;height:var(--hh);background:rgba(8,8,8,.97);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border-bottom:1px solid var(--border);z-index:50}
+.hdr-inner{height:64px;padding:0 16px;display:flex;align-items:center;justify-content:space-between}
+.logo{display:flex;align-items:center;gap:10px}
+.logo-m{width:38px;height:38px;border-radius:50%;object-fit:contain;background:#fff}
+.logo-txt{display:flex;flex-direction:column;gap:1px}
+.logo-top{font-family:var(--fd);font-weight:900;font-size:18px;letter-spacing:1.5px;line-height:1}
+.logo-bot{font-family:var(--fd);font-weight:600;font-size:9.5px;letter-spacing:1px;color:var(--t3);line-height:1;text-transform:uppercase}
+.pg-title{font-family:var(--fd);font-weight:700;font-size:13px;letter-spacing:1.5px;text-transform:uppercase;color:var(--t2)}
+.main{flex:1;overflow-y:auto;padding-top:var(--hh);padding-bottom:var(--nh);-webkit-overflow-scrolling:touch}
+
+/* ── AUTH SCREENS ── */
+.auth-wrap{min-height:100dvh;min-height:100vh;display:flex;flex-direction:column;align-items:center;padding:40px 24px 32px;background:var(--bg);max-width:480px;margin:0 auto;overflow-y:auto}
+.auth-logo{display:flex;flex-direction:column;align-items:center;gap:10px;margin-bottom:36px}
+.auth-m{width:90px;height:90px;border-radius:50%;object-fit:contain;background:#fff}
+.auth-title{font-family:var(--fd);font-weight:900;font-size:24px;letter-spacing:2px}
+.auth-sub{font-size:12px;color:var(--t3);letter-spacing:1px;text-transform:uppercase;margin-top:2px}
+
+.auth-form{width:100%;display:flex;flex-direction:column;gap:10px}
+.auth-input{width:100%;padding:13px 14px;background:var(--card);border:1px solid var(--border);border-radius:var(--r2);color:var(--text);font-size:15px;outline:none;transition:border-color .2s}
+.auth-input:focus{border-color:var(--accent)}
+.auth-input::placeholder{color:var(--t3)}
+.auth-select{width:100%;padding:13px 14px;background:var(--card);border:1px solid var(--border);border-radius:var(--r2);color:var(--text);font-size:15px;outline:none;appearance:none;transition:border-color .2s}
+.auth-select:focus{border-color:var(--accent)}
+.auth-select option{background:var(--card);color:var(--text)}
+.auth-btn{width:100%;padding:15px;background:var(--accent);color:#fff;font-family:var(--fd);font-weight:800;font-size:17px;letter-spacing:1px;text-transform:uppercase;border-radius:var(--r2);margin-top:4px;transition:opacity .15s}
+.auth-btn:active{opacity:.8}
+.auth-err{color:#F87171;font-size:13px;text-align:center;padding:2px 0}
+.auth-switch{text-align:center;margin-top:16px;font-size:13px;color:var(--t2)}
+.auth-switch-btn{color:var(--accent);font-weight:700;margin-left:4px;-webkit-tap-highlight-color:transparent}
+
+/* Discipline pills on register */
+.disc-label{font-size:11px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--t3);margin-bottom:6px;display:block}
+.disc-pills{display:flex;flex-wrap:wrap;gap:6px}
+.disc-pill{padding:7px 13px;border-radius:20px;font-size:12px;font-weight:700;border:1px solid var(--border);color:var(--t2);background:var(--card);-webkit-tap-highlight-color:transparent;transition:all .15s}
+.disc-pill.on{border-color:var(--accent);color:var(--accent);background:var(--adim)}
+
+/* Demo accounts */
+.demo-section{width:100%;margin-top:20px}
+.demo-label{font-size:11px;color:var(--t3);text-align:center;letter-spacing:.8px;text-transform:uppercase;margin-bottom:10px}
+.demo-btns{display:flex;flex-direction:column;gap:6px}
+.demo-btn{width:100%;padding:11px 14px;background:var(--card);border:1px solid var(--bsub);border-radius:var(--r2);text-align:left;display:flex;align-items:center;gap:12px;-webkit-tap-highlight-color:transparent;transition:background .15s}
+.demo-btn:active{background:var(--elev)}
+.demo-av{width:30px;height:30px;border-radius:6px;display:flex;align-items:center;justify-content:center;font-family:var(--fd);font-weight:900;font-size:12px;color:#fff;flex-shrink:0}
+.demo-info{flex:1}
+.demo-name{font-size:13px;font-weight:600}
+.demo-role{font-size:10px;color:var(--t3);text-transform:uppercase;letter-spacing:.5px;margin-top:1px}
+
+/* ── BOTTOM NAV ── */
+.bnav{position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:100%;max-width:480px;height:var(--nh);background:rgba(8,8,8,.97);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border-top:1px solid var(--border);display:flex;align-items:stretch;z-index:100}
+.ntab{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;padding:6px 2px;color:var(--t3);position:relative;-webkit-tap-highlight-color:transparent;transition:color .2s}
+.ntab.on{color:var(--accent)}
+.ntab svg{width:20px;height:20px}
+.nlbl{font-size:9px;font-weight:700;letter-spacing:.4px;text-transform:uppercase}
+.nind{position:absolute;top:0;left:50%;transform:translateX(-50%);width:24px;height:2px;background:var(--accent);border-radius:0 0 4px 4px}
+
+/* ── SCHEDULE ── */
+.dsel-wrap{position:sticky;top:0;background:rgba(8,8,8,.97);backdrop-filter:blur(12px);border-bottom:1px solid var(--bsub);z-index:10}
+.dsel{display:flex;overflow-x:auto;gap:4px;padding:10px 12px;scroll-snap-type:x mandatory}
+.dsel::-webkit-scrollbar{display:none}
+.dbtn{flex-shrink:0;scroll-snap-align:center;display:flex;flex-direction:column;align-items:center;gap:5px;padding:10px 18px;border-radius:var(--r2);color:var(--t3);font-family:var(--fd);font-weight:700;font-size:13px;letter-spacing:1px;text-transform:uppercase;transition:color .2s,background .2s;-webkit-tap-highlight-color:transparent}
+.dbtn.on{color:var(--accent);background:var(--adim)}
+.tdot{width:5px;height:5px;border-radius:50%;background:var(--accent)}
+.dhead{display:flex;align-items:baseline;justify-content:space-between;padding:18px 16px 10px}
+.dname{font-family:var(--fd);font-weight:900;font-size:28px;letter-spacing:.5px;display:flex;align-items:center;gap:10px}
+.tbadge{font-size:11px;font-weight:600;letter-spacing:.5px;text-transform:uppercase;color:var(--accent);background:var(--adim);border:1px solid var(--aglow);padding:3px 8px;border-radius:20px;font-family:var(--fb)}
+.ccount{font-size:13px;color:var(--t3)}
+.clist{display:flex;flex-direction:column;padding:0 12px}
+
+/* Regular class card */
+.ccard{background:var(--card);border-radius:var(--r2);overflow:hidden;margin-bottom:8px;border:1px solid var(--bsub);transition:opacity .2s}
+.ccard.past{opacity:.35}
+.ccard-top{display:flex;align-items:stretch}
+.ctime{display:flex;flex-direction:column;align-items:center;justify-content:center;padding:14px 12px 14px 14px;min-width:68px;gap:1px;flex-shrink:0}
+.tmain{font-family:var(--fd);font-weight:800;font-size:20px;color:var(--text);line-height:1}
+.tper{font-family:var(--fd);font-weight:600;font-size:11px;color:var(--t3);letter-spacing:.5px;text-transform:uppercase}
+.tdur{margin-top:4px;font-size:10px;color:var(--t3);font-weight:500}
+.cbar{width:3px;flex-shrink:0;border-radius:2px;margin:10px 0}
+.cinfo{display:flex;flex-direction:column;justify-content:center;padding:13px 14px 13px 12px;flex:1;gap:3px;min-width:0}
+.cname{font-family:var(--fd);font-weight:900;font-size:19px;letter-spacing:.3px;line-height:1.1}
+.caud{font-size:12px;color:var(--t2);font-weight:500;font-style:italic}
+.ctbadge{display:inline-flex;align-self:flex-start;font-size:10px;font-weight:700;letter-spacing:.8px;text-transform:uppercase;padding:3px 8px;border-radius:20px;margin-top:3px}
+
+/* Attendance row */
+.att-row{display:flex;align-items:center;justify-content:space-between;padding:9px 14px 10px;border-top:1px solid var(--bsub);gap:8px}
+.att-go{display:flex;align-items:center;gap:6px;padding:6px 12px;border-radius:20px;font-size:12px;font-weight:700;letter-spacing:.4px;border:1px solid var(--border);color:var(--t3);transition:all .2s;-webkit-tap-highlight-color:transparent}
+.att-go.on{color:var(--accent);background:var(--adim);border-color:var(--aglow)}
+.att-go svg{width:13px;height:13px}
+.att-who{display:flex;align-items:center;gap:5px;padding:6px 10px;border-radius:20px;font-size:12px;font-weight:600;color:var(--t2);-webkit-tap-highlight-color:transparent}
+.att-who svg{width:12px;height:12px;transition:transform .2s}
+.att-who svg.open{transform:rotate(180deg)}
+.att-members{padding:0 14px 12px;display:flex;flex-wrap:wrap;gap:6px}
+.att-pill{display:flex;align-items:center;gap:6px;padding:5px 10px 5px 6px;background:var(--elev);border-radius:20px;font-size:12px;font-weight:500;color:var(--t2)}
+.att-av{width:22px;height:22px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:var(--fd);font-weight:800;font-size:10px;color:#fff;flex-shrink:0}
+.att-first{font-size:12px;color:var(--t3);font-style:italic;padding:4px 14px 12px}
+
+/* Comp team card */
+.comp-card{background:var(--card);border-radius:var(--r2);overflow:hidden;margin-bottom:8px;border:1px solid var(--gold);box-shadow:0 0 20px rgba(212,160,23,.08)}
+.comp-card.past{opacity:.35}
+.comp-topbar{height:3px;background:linear-gradient(90deg,var(--gold),#F5D060,var(--gold))}
+.comp-top{display:flex;align-items:stretch}
+.comp-cinfo{display:flex;flex-direction:column;justify-content:center;padding:12px 14px 12px 12px;flex:1;gap:4px}
+.comp-badge{display:inline-flex;align-items:center;gap:5px;font-size:10px;font-weight:800;letter-spacing:1px;text-transform:uppercase;color:var(--gold);background:var(--gdim);border:1px solid var(--gglow);padding:3px 9px;border-radius:20px;align-self:flex-start;margin-bottom:1px}
+.comp-cname{font-family:var(--fd);font-weight:900;font-size:22px;letter-spacing:.3px;line-height:1.1}
+.comp-tag{font-size:12.5px;color:var(--gold);font-weight:600;letter-spacing:.2px}
+.comp-aud{font-size:12px;color:var(--t2);font-style:italic}
+.cbar-gold{width:3px;flex-shrink:0;border-radius:2px;margin:10px 0;background:var(--gold)}
+
+.no-cls{display:flex;flex-direction:column;align-items:center;padding:60px 20px;gap:8px}
+.no-cls .ico{font-size:40px}
+.no-cls p{color:var(--t2);font-size:16px;font-weight:500}
+.no-cls .sub{color:var(--t3);font-size:13px}
+.sched-disc{display:flex;align-items:center;gap:6px;margin:8px 16px 0;padding:10px 12px;background:var(--card);border:1px solid var(--bsub);border-radius:var(--r1);font-size:12px;color:var(--t3);line-height:1.4}
+.disc-link{color:var(--accent);text-decoration:none}
+
+/* ── FEED / POSTS ── */
+.feed-wrap{padding:0 0 20px}
+.feed-composer-bar{display:flex;align-items:center;gap:10px;margin:12px 12px 0;padding:12px 14px;background:var(--card);border:1px solid var(--bsub);border-radius:var(--r2);cursor:pointer;-webkit-tap-highlight-color:transparent}
+.feed-composer-bar:active{background:var(--elev)}
+.feed-composer-av{width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:var(--fd);font-weight:800;font-size:13px;color:#fff;flex-shrink:0}
+.feed-composer-ph{flex:1;font-size:14px;color:var(--t3);text-align:left}
+.post-card{background:var(--card);border:1px solid var(--bsub);border-radius:var(--r2);margin:8px 12px 0;overflow:hidden;position:relative}
+.post-pin-bar{height:2px;background:var(--accent)}
+.post-hdr{display:flex;align-items:center;gap:10px;padding:12px 14px 10px}
+.post-avatar{width:38px;height:38px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:var(--fd);font-weight:800;font-size:14px;color:#fff;flex-shrink:0}
+.post-info{flex:1;min-width:0}
+.post-name{font-size:14px;font-weight:700;color:var(--text);display:flex;align-items:center;gap:6px;flex-wrap:wrap}
+.post-staff-badge{font-size:9px;font-weight:800;letter-spacing:.8px;text-transform:uppercase;color:var(--accent);background:var(--adim);border:1px solid rgba(59,130,246,.3);padding:2px 6px;border-radius:20px}
+.post-meta{font-size:11px;color:var(--t3);margin-top:1px}
+.post-menu-btn{background:none;border:none;color:var(--t3);font-size:22px;padding:4px 8px;line-height:1;cursor:pointer;flex-shrink:0;margin-right:-6px}
+.post-menu-dd{position:absolute;right:14px;top:52px;background:var(--elev);border:1px solid var(--border);border-radius:var(--r1);overflow:hidden;z-index:20;min-width:130px;box-shadow:0 4px 20px rgba(0,0,0,.5)}
+.post-menu-dd button{display:block;width:100%;padding:12px 16px;text-align:left;font-size:14px;font-weight:600;color:var(--text);background:none;border:none;cursor:pointer;-webkit-tap-highlight-color:transparent}
+.post-menu-dd button:active{background:var(--card)}
+.del-btn{color:#EF4444!important}
+.post-type-tag{display:inline-flex;align-items:center;gap:5px;font-size:10px;font-weight:700;letter-spacing:.8px;text-transform:uppercase;padding:3px 9px;border-radius:20px;margin:0 14px 8px}
+.post-title{font-family:var(--fd);font-weight:800;font-size:17px;letter-spacing:.2px;color:var(--text);padding:0 14px 6px;line-height:1.2}
+.post-photo{width:100%;max-height:360px;object-fit:cover;display:block}
+.post-body{padding:10px 14px 14px;font-size:14.5px;color:var(--t2);line-height:1.55;white-space:pre-wrap;margin:0}
+.post-body.no-top{padding-top:0}
+.post-photo-prev{width:100%;max-height:220px;object-fit:cover;border-radius:8px;margin-bottom:10px;display:block}
+.composer-actions{display:flex;align-items:center;gap:8px;margin-top:10px}
+.composer-photo-btn{display:flex;align-items:center;gap:6px;font-size:13px;font-weight:600;color:var(--accent);padding:8px 12px;background:var(--adim);border:1px solid rgba(59,130,246,.25);border-radius:var(--r1);cursor:pointer;-webkit-tap-highlight-color:transparent}
+.composer-remove-btn{font-size:12px;font-weight:600;color:var(--t3);padding:8px 10px;background:var(--card);border:1px solid var(--bsub);border-radius:var(--r1);cursor:pointer}
+
+/* ── PROGRAMS ── */
+.prog-wrap{padding:16px 0}
+.prog-back{display:flex;align-items:center;gap:6px;padding:8px 16px 16px;color:var(--accent);font-size:14px;font-weight:600;-webkit-tap-highlight-color:transparent}
+.prog-intro{padding:4px 16px 16px}
+.prog-ititle{font-family:var(--fd);font-weight:900;font-size:28px;letter-spacing:.5px}
+.prog-isub{font-size:13px;color:var(--t3);margin-top:4px}
+.prog-grid{display:flex;flex-direction:column;gap:8px;padding:0 12px}
+.prog-card{display:flex;flex-direction:column;align-items:flex-start;background:var(--card);border:1px solid var(--bsub);border-radius:var(--r3);padding:0 16px 16px;position:relative;overflow:hidden;text-align:left;gap:6px;-webkit-tap-highlight-color:transparent;transition:background .15s;cursor:pointer}
+.prog-card:active{background:var(--elev)}
+.prog-tbar{height:3px;width:40px;border-radius:0 0 3px 3px;margin-bottom:6px}
+.prog-ico{font-size:28px;line-height:1}
+.prog-badge{font-size:10px;font-weight:700;letter-spacing:.8px;text-transform:uppercase;padding:3px 8px;border-radius:20px}
+.prog-nm{font-family:var(--fd);font-weight:900;font-size:20px;letter-spacing:.3px;line-height:1.1}
+.prog-tline{font-size:13px;color:var(--t2)}
+.prog-arr{position:absolute;right:16px;top:50%;transform:translateY(-50%);color:var(--t3)}
+.prog-dh{display:flex;flex-direction:column;align-items:flex-start;gap:8px;padding:20px 16px 24px;border-bottom:1px solid var(--bsub)}
+.prog-dico{font-size:40px;line-height:1}
+.prog-dnm{font-family:var(--fd);font-weight:900;font-size:32px;letter-spacing:.5px;line-height:1.05}
+.prog-dtl{font-size:14px;color:var(--t2);font-style:italic}
+.prog-dbody{padding:20px 16px;display:flex;flex-direction:column;gap:24px}
+.prog-ddesc{font-size:15px;color:var(--t2);line-height:1.6}
+.prog-stitle{font-family:var(--fd);font-weight:700;font-size:12px;letter-spacing:1.5px;text-transform:uppercase;color:var(--t3);margin-bottom:12px}
+.prog-hls{display:flex;flex-direction:column;gap:10px}
+.prog-hl{display:flex;align-items:center;gap:10px;font-size:14.5px;font-weight:500}
+.prog-dot{width:6px;height:6px;border-radius:50%;flex-shrink:0}
+.prog-lvls{display:flex;flex-wrap:wrap;gap:8px}
+.prog-lvl{font-size:12px;font-weight:600;color:var(--t2);background:var(--elev);border:1px solid var(--border);padding:5px 12px;border-radius:20px}
+
+/* ── PRIVATE LESSONS ── */
+.priv-wrap{padding:0 0 16px}
+.priv-inst-row{display:flex;gap:8px;overflow-x:auto;padding:16px 12px 12px;scroll-snap-type:x mandatory}
+.priv-inst-row::-webkit-scrollbar{display:none}
+.priv-ibtn{flex-shrink:0;scroll-snap-align:center;display:flex;align-items:center;gap:8px;padding:10px 14px;background:var(--card);border:1px solid var(--bsub);border-radius:var(--r2);-webkit-tap-highlight-color:transparent;transition:border-color .2s,background .2s}
+.priv-ibtn.on{border-color:var(--accent);background:var(--adim)}
+.priv-iav{width:30px;height:30px;border-radius:6px;display:flex;align-items:center;justify-content:center;font-family:var(--fd);font-weight:900;font-size:12px;color:#fff;flex-shrink:0}
+.priv-iname{font-size:13px;font-weight:600;white-space:nowrap}
+.priv-ispec{font-size:10px;color:var(--t3);text-transform:uppercase;letter-spacing:.5px}
+.cal-wrap{padding:0 12px 8px}
+.cal-hdr{display:flex;align-items:center;justify-content:space-between;padding:4px 0 12px}
+.cal-mnth{font-family:var(--fd);font-weight:800;font-size:20px;letter-spacing:.5px}
+.cal-nav{width:36px;height:36px;display:flex;align-items:center;justify-content:center;border-radius:50%;color:var(--t2);-webkit-tap-highlight-color:transparent}
+.cal-nav:active{background:var(--elev)}
+.cal-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:2px}
+.cal-dow{font-size:10px;font-weight:700;letter-spacing:.5px;text-transform:uppercase;color:var(--t3);text-align:center;padding:4px 0}
+.cal-day{display:flex;flex-direction:column;align-items:center;justify-content:center;aspect-ratio:1;border-radius:8px;font-size:13px;font-weight:600;color:var(--t3);position:relative;-webkit-tap-highlight-color:transparent;transition:background .15s}
+.cal-day.cur{color:var(--t2)}
+.cal-day.today{color:var(--accent);font-weight:800}
+.cal-day.today::after{content:'';position:absolute;bottom:4px;left:50%;transform:translateX(-50%);width:4px;height:4px;border-radius:50%;background:var(--accent)}
+.cal-day.sel{background:var(--accent);color:#fff}
+.cal-day.sel.today::after{background:#fff}
+.cal-day.dis{opacity:.3;pointer-events:none}
+.cal-day.hasbk::before{content:'';position:absolute;top:4px;right:4px;width:5px;height:5px;border-radius:50%;background:var(--gold)}
+.cal-day.sel.hasbk::before{background:#fff}
+.slots-wrap{padding:0 12px 8px}
+.slots-date-hdr{font-family:var(--fd);font-weight:800;font-size:17px;letter-spacing:.3px;padding:12px 0 10px}
+.slot-row{display:flex;align-items:center;justify-content:space-between;padding:11px 14px;background:var(--card);border:1px solid var(--bsub);border-radius:var(--r2);margin-bottom:6px}
+.slot-time{font-family:var(--fd);font-weight:800;font-size:18px;min-width:82px}
+.slot-status{font-size:12px;font-weight:600;color:var(--t3);flex:1;padding:0 10px}
+.slot-status.mine{color:var(--accent)}
+.slot-book-btn{padding:7px 14px;background:var(--accent);color:#fff;font-family:var(--fd);font-weight:800;font-size:13px;letter-spacing:.5px;text-transform:uppercase;border-radius:var(--r1);transition:opacity .15s}
+.slot-book-btn:active{opacity:.7}
+.slot-cancel-btn{padding:7px 14px;background:var(--adim);color:var(--accent);font-family:var(--fd);font-weight:800;font-size:13px;letter-spacing:.5px;text-transform:uppercase;border-radius:var(--r1);border:1px solid var(--aglow)}
+.my-bk-sec{padding:0 12px 8px}
+.sec-ttl{font-family:var(--fd);font-weight:700;font-size:12px;letter-spacing:1.5px;text-transform:uppercase;color:var(--t3);padding:8px 0 10px}
+.bk-card{background:var(--card);border:1px solid var(--bsub);border-radius:var(--r2);padding:13px 14px;margin-bottom:6px;display:flex;align-items:center;gap:12px}
+.bk-dot{width:10px;height:10px;border-radius:50%;flex-shrink:0}
+.bk-info{flex:1}
+.bk-who{font-size:14px;font-weight:600}
+.bk-when{font-size:12px;color:var(--t2);margin-top:2px}
+.bk-cancel{font-size:12px;color:var(--accent);font-weight:600;padding:4px 8px}
+
+/* ── PROFILE ── */
+.prof-wrap{padding:16px 0 24px}
+.prof-hero{display:flex;flex-direction:column;align-items:center;padding:20px 16px 24px;gap:10px;border-bottom:1px solid var(--bsub)}
+.prof-av{width:72px;height:72px;border-radius:14px;display:flex;align-items:center;justify-content:center;font-family:var(--fd);font-weight:900;font-size:28px;color:#fff}
+.prof-name{font-family:var(--fd);font-weight:900;font-size:26px;letter-spacing:.5px;margin-top:4px}
+.prof-belt{font-size:13px;font-weight:600;padding:4px 14px;border-radius:20px;border:1px solid var(--border);color:var(--t2)}
+.prof-since{font-size:12px;color:var(--t3)}
+.prof-discs{display:flex;flex-wrap:wrap;gap:6px;justify-content:center}
+.prof-disc{font-size:11px;font-weight:700;letter-spacing:.6px;text-transform:uppercase;padding:4px 10px;border-radius:20px}
+.prof-sec{margin-bottom:8px;padding:0 12px}
+.prof-stitle{font-family:var(--fd);font-weight:700;font-size:12px;letter-spacing:1.5px;text-transform:uppercase;color:var(--t3);padding:16px 4px 10px}
+.prof-card{background:var(--card);border:1px solid var(--bsub);border-radius:var(--r3);overflow:hidden}
+.prof-row{display:flex;align-items:center;gap:12px;padding:14px 16px}
+.prof-divider{height:1px;background:var(--bsub);margin:0 16px}
+.prof-admin-btn{width:calc(100% - 24px);margin:20px 12px 12px;padding:16px;background:var(--adim);border:1px solid var(--aglow);color:var(--accent);font-family:var(--fd);font-weight:900;font-size:17px;letter-spacing:1px;text-transform:uppercase;border-radius:var(--r2);text-align:center;display:flex;align-items:center;justify-content:center;gap:10px;-webkit-tap-highlight-color:transparent}
+.prof-logout{width:calc(100% - 24px);margin:0 12px;padding:14px;background:var(--card);border:1px solid var(--border);color:var(--t2);font-family:var(--fd);font-weight:800;font-size:16px;letter-spacing:1px;text-transform:uppercase;border-radius:var(--r2);text-align:center;-webkit-tap-highlight-color:transparent}
+
+/* ── ADMIN ── */
+.admin-wrap{position:fixed;inset:0;background:var(--bg);z-index:200;display:flex;flex-direction:column;max-width:480px;margin:0 auto}
+.admin-hdr{height:64px;background:rgba(8,8,8,.97);border-bottom:1px solid var(--border);display:flex;align-items:center;padding:0 16px;gap:14px;flex-shrink:0}
+.admin-back{display:flex;align-items:center;gap:6px;color:var(--accent);font-size:14px;font-weight:600;-webkit-tap-highlight-color:transparent}
+.admin-htitle{font-family:var(--fd);font-weight:900;font-size:20px;letter-spacing:1px;color:var(--accent);flex:1}
+.admin-tabs{display:flex;border-bottom:1px solid var(--border);flex-shrink:0;background:var(--bg)}
+.admin-tab{flex:1;padding:12px 4px;font-family:var(--fd);font-weight:700;font-size:13px;letter-spacing:1px;text-transform:uppercase;color:var(--t3);border-bottom:2px solid transparent;transition:color .2s;-webkit-tap-highlight-color:transparent;text-align:center}
+.admin-tab.on{color:var(--accent);border-bottom-color:var(--accent)}
+.admin-content{flex:1;overflow-y:auto;padding:12px 0 24px}
+.admin-item{display:flex;align-items:center;gap:12px;padding:13px 16px;background:var(--card);border-bottom:1px solid var(--bsub);-webkit-tap-highlight-color:transparent;transition:background .15s;cursor:pointer}
+.admin-item:active{background:var(--elev)}
+.admin-item:first-child{border-radius:var(--r2) var(--r2) 0 0}
+.admin-item:last-child{border-radius:0 0 var(--r2) var(--r2);border-bottom:none}
+.admin-item:first-child:last-child{border-radius:var(--r2)}
+.ai-info{flex:1;min-width:0}
+.ai-name{font-family:var(--fd);font-weight:800;font-size:16px;letter-spacing:.2px}
+.ai-sub{font-size:12px;color:var(--t2);margin-top:2px}
+.ai-edit{color:var(--t3)}
+.admin-list-wrap{padding:0 12px;margin-bottom:12px}
+.admin-day-hdr{font-family:var(--fd);font-weight:700;font-size:12px;letter-spacing:1.5px;text-transform:uppercase;color:var(--t3);padding:12px 4px 8px}
+.add-item-btn{display:flex;align-items:center;gap:8px;width:100%;padding:13px 16px;background:var(--adim);border:1px dashed var(--aglow);border-radius:var(--r2);color:var(--accent);font-family:var(--fd);font-weight:700;font-size:14px;letter-spacing:.5px;margin-top:8px;-webkit-tap-highlight-color:transparent}
+.form-overlay{position:fixed;inset:0;background:rgba(0,0,0,.75);z-index:300;display:flex;align-items:flex-end;max-width:480px;margin:0 auto}
+.form-sheet{width:100%;background:var(--bg2);border-radius:20px 20px 0 0;padding:0 0 32px;max-height:90vh;overflow-y:auto}
+.form-drag{width:36px;height:4px;background:var(--border);border-radius:2px;margin:12px auto 4px}
+.form-title{font-family:var(--fd);font-weight:900;font-size:22px;letter-spacing:.5px;padding:12px 20px 16px}
+.form-group{padding:0 20px 14px}
+.form-label{display:block;font-size:11px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--t3);margin-bottom:6px}
+.form-input,.form-select,.form-textarea{width:100%;padding:12px 14px;background:var(--card);border:1px solid var(--border);border-radius:var(--r2);color:var(--text);font-size:14px;outline:none}
+.form-input:focus,.form-select:focus,.form-textarea:focus{border-color:var(--accent)}
+.form-select option{background:var(--card)}
+.form-textarea{min-height:90px;resize:vertical;line-height:1.5}
+.form-toggle-row{display:flex;align-items:center;justify-content:space-between;padding:0 20px 14px}
+.form-toggle-lbl{font-size:14px;font-weight:600;color:var(--t2)}
+.form-toggle{width:44px;height:26px;border-radius:13px;border:none;cursor:pointer;position:relative;transition:background .2s;flex-shrink:0}
+.form-toggle.on{background:var(--accent)}
+.form-toggle.off{background:var(--border)}
+.form-toggle::after{content:'';position:absolute;top:3px;left:3px;width:20px;height:20px;border-radius:50%;background:#fff;transition:transform .2s}
+.form-toggle.on::after{transform:translateX(18px)}
+.form-btns{display:flex;gap:10px;padding:8px 20px 0}
+.form-save{flex:1;padding:14px;background:var(--accent);color:#fff;font-family:var(--fd);font-weight:800;font-size:16px;letter-spacing:.8px;text-transform:uppercase;border-radius:var(--r2)}
+.form-del{padding:14px 18px;background:rgba(248,113,113,.1);color:#F87171;font-family:var(--fd);font-weight:800;font-size:16px;border-radius:var(--r2)}
+.form-cancel{flex:1;padding:14px;background:var(--elev);color:var(--t2);font-family:var(--fd);font-weight:800;font-size:16px;letter-spacing:.8px;text-transform:uppercase;border-radius:var(--r2)}
+.bk-admin-card{display:flex;align-items:center;gap:12px;padding:13px 16px;background:var(--card);border:1px solid var(--bsub);border-radius:var(--r2);margin-bottom:6px}
+.bk-av{width:36px;height:36px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-family:var(--fd);font-weight:900;font-size:13px;color:#fff;flex-shrink:0}
+.bk-main{flex:1}
+.bk-member{font-size:14px;font-weight:700}
+.bk-details{font-size:12px;color:var(--t2);margin-top:2px}
+.bk-status{font-size:11px;font-weight:700;letter-spacing:.5px;text-transform:uppercase;padding:4px 8px;border-radius:10px}
+.bk-status.confirmed{color:var(--accent);background:var(--adim)}
+</style>
+</head>
+<body>
+<div id="root"></div>
+<script type="text/babel">
+const { useState, useRef, useEffect } = React;
+
+// ══════════════════════════════════════════════════════
+// CONSTANTS
+// ══════════════════════════════════════════════════════
+
+const CT = {
+  mma:      {label:'MMA',       c:'var(--mma)', bg:'var(--mmabg)'},
+  bjj:      {label:'Jiu-Jitsu', c:'var(--bjj)', bg:'var(--bjjbg)'},
+  muaythai: {label:'Muay Thai', c:'var(--mt)',  bg:'var(--mtbg)'},
+  boxing:   {label:'Boxing',    c:'var(--box)', bg:'var(--boxbg)'},
+  fitness:  {label:'Fitness',   c:'var(--fit)', bg:'var(--fitbg)'},
+  kids:     {label:'Kids',      c:'var(--kid)', bg:'var(--kidbg)'},
+  openmat:  {label:'Open Mat',  c:'var(--om)',  bg:'var(--ombg)'},
+}
+
+const DAYS = ['Monday','Tuesday','Wednesday','Thursday','Friday','Saturday','Sunday']
+
+const BELT_OPTIONS = ['White Belt','Blue Belt','Purple Belt','Brown Belt','Black Belt','Beginner','Intermediate','Advanced']
+
+const AVATAR_COLORS = ['#3B82F6','#2563EB','#4F46E5','#0EA5E9','#6366F1','#0284C7','#1D4ED8','#7C3AED']
+
+const DEFAULT_SCHEDULE = {
+  Monday:[
+    {time:'4:30 PM', name:'Kids Brazilian Jiu Jitsu (Gi)',  duration:60, type:'kids',     audience:'Kids ages 4–12'},
+    {time:'5:30 PM', name:'Women\'s Jiu Jitsu',             duration:60, type:'bjj',      audience:'Women only'},
+    {time:'5:30 PM', name:'Kids MMA',                       duration:60, type:'kids',     audience:'Kids & youth'},
+    {time:'6:30 PM', name:'Foundations MMA',                duration:60, type:'mma',      audience:'Beginners & all levels'},
+    {time:'7:45 PM', name:'Strength & Conditioning',        duration:30, type:'fitness',  audience:'All levels welcome'},
+  ],
+  Tuesday:[
+    {time:'11:00 AM',name:'Foundations Muay Thai',          duration:60, type:'muaythai', audience:'Beginners & all levels'},
+    {time:'12:00 PM',name:'Brazilian Jiu Jitsu (Gi)',       duration:60, type:'bjj',      audience:'All levels'},
+    {time:'4:30 PM', name:'Women\'s Jiu Jitsu',             duration:60, type:'bjj',      audience:'Women only'},
+    {time:'5:00 PM', name:'Ninjas',                         duration:30, type:'kids',     audience:'Little ones ages 4–7'},
+    {time:'5:30 PM', name:'Kids MMA',                       duration:60, type:'kids',     audience:'Kids & youth'},
+    {time:'5:30 PM', name:'Foundations MMA',                duration:60, type:'mma',      audience:'Beginners & all levels'},
+    {time:'5:30 PM', name:'Women\'s MMA',                   duration:60, type:'mma',      audience:'Women only'},
+    {time:'6:30 PM', name:'Comp MMA',                       duration:75, type:'mma',      audience:'Competition team members', compTeam:true, compTagline:'Train harder. Compete smarter. Win.'},
+  ],
+  Wednesday:[
+    {time:'9:15 AM', name:'Functional Fitness',             duration:60, type:'fitness',  audience:'All fitness levels welcome'},
+    {time:'10:30 AM',name:'Ninjas',                         duration:30, type:'kids',     audience:'Little ones ages 4–7'},
+    {time:'11:00 AM',name:'Kids MMA',                       duration:30, type:'kids',     audience:'Kids & youth'},
+    {time:'4:00 PM', name:'Functional Fitness',             duration:30, type:'fitness',  audience:'All fitness levels welcome'},
+    {time:'4:30 PM', name:'Ninjas',                         duration:30, type:'kids',     audience:'Little ones ages 4–7'},
+    {time:'4:30 PM', name:'Youth Thai Boxing',              duration:30, type:'muaythai', audience:'Youth & teens'},
+    {time:'5:00 PM', name:'Foundations Muay Thai',          duration:60, type:'muaythai', audience:'Beginners & all levels'},
+    {time:'5:00 PM', name:'Kids Brazilian Jiu Jitsu (Gi)',  duration:60, type:'kids',     audience:'Kids ages 4–12'},
+    {time:'6:15 PM', name:'Jiu Jitsu (No Gi)',              duration:60, type:'bjj',      audience:'All levels'},
+  ],
+  Thursday:[
+    {time:'11:00 AM',name:'Foundations Muay Thai',          duration:60, type:'muaythai', audience:'Beginners & all levels'},
+    {time:'4:30 PM', name:'Women\'s MMA',                   duration:60, type:'mma',      audience:'Women only'},
+    {time:'4:30 PM', name:'Youth Thai Boxing',              duration:60, type:'muaythai', audience:'Youth & teens'},
+    {time:'5:00 PM', name:'Ninjas',                         duration:30, type:'kids',     audience:'Little ones ages 4–7'},
+    {time:'5:30 PM', name:'Kids Brazilian Jiu Jitsu (Gi)',  duration:60, type:'kids',     audience:'Kids ages 4–12'},
+    {time:'6:30 PM', name:'Jiu Jitsu (No Gi)',              duration:60, type:'bjj',      audience:'All levels'},
+    {time:'7:30 PM', name:'Foundations MMA',                duration:60, type:'mma',      audience:'Beginners & all levels'},
+    {time:'7:45 PM', name:'Wrestling',                      duration:30, type:'mma',      audience:'All levels'},
+  ],
+  Friday:[
+    {time:'10:15 AM',name:'Functional Fitness',             duration:30, type:'fitness',  audience:'All fitness levels welcome'},
+    {time:'10:30 AM',name:'Kids Brazilian Jiu Jitsu (Gi)',  duration:60, type:'kids',     audience:'Kids ages 4–12'},
+    {time:'11:30 AM',name:'Women\'s Jiu Jitsu',             duration:60, type:'bjj',      audience:'Women only'},
+    {time:'11:30 AM',name:'Kids Sparring',                  duration:60, type:'kids',     audience:'Kids & youth'},
+    {time:'12:30 PM',name:'Boxing',                         duration:30, type:'boxing',   audience:'All levels'},
+    {time:'5:30 PM', name:'Comp Striking',                  duration:60, type:'mma',      audience:'Competition team members', compTeam:true, compTagline:'Sharpen your weapons. Compete at the highest level.'},
+    {time:'6:30 PM', name:'Open Sparring',                  duration:60, type:'mma',      audience:'Intermediate & advanced'},
+  ],
+  Saturday:[
+    {time:'9:00 AM', name:'Brazilian Jiu Jitsu (Gi)',       duration:60, type:'bjj',      audience:'All levels'},
+    {time:'10:30 AM',name:'Kids Brazilian Jiu Jitsu (Gi)',  duration:60, type:'kids',     audience:'Kids ages 4–12'},
+    {time:'11:00 AM',name:'Ninjas',                         duration:30, type:'kids',     audience:'Little ones ages 4–7'},
+    {time:'11:00 AM',name:'Women\'s Jiu Jitsu',             duration:60, type:'bjj',      audience:'Women only'},
+    {time:'11:30 AM',name:'Kids MMA',                       duration:45, type:'kids',     audience:'Kids & youth'},
+    {time:'12:30 PM',name:'Youth Conditioning',             duration:30, type:'fitness',  audience:'Youth athletes'},
+    {time:'1:00 PM', name:'Boxing',                         duration:30, type:'boxing',   audience:'All levels'},
+  ],
+  Sunday:[],
+}
+
+const POST_TYPES = {
+  post:      {icon:'💬',label:'Post',      ac:'#60A5FA'},
+  event:     {icon:'📅',label:'Event',     ac:'#3B82F6'},
+  congrats:  {icon:'🏆',label:'Congrats',  ac:'#D4A017'},
+  reminder:  {icon:'⚠️', label:'Reminder',  ac:'#94A3B8'},
+  update:    {icon:'🔄',label:'Update',    ac:'#60A5FA'},
+  challenge: {icon:'💪',label:'Challenge', ac:'#818CF8'},
+  forsale:   {icon:'🎟️', label:'For Sale',  ac:'#34D399'},
+  lostfound: {icon:'🔍',label:'Lost & Found',ac:'#F59E0B'},
+}
+
+const DEFAULT_POSTS = [
+  {id:'dp1',authorId:'admin1',authorName:'Darien Cobon',authorInitials:'DC',authorAccent:'#3B82F6',isAdmin:true,postType:'event',title:'Summer Competition Camp — Registration Open',body:'Sharpen your skills before the summer tournament season. Intensive 5-day competition prep camp runs July 14–18. Limited spots — sign up at the front desk or call (775) 433-1226.',photo:null,date:'2026-05-05T10:00:00',pinned:true,edited:false},
+  {id:'dp2',authorId:'admin1',authorName:'Darien Cobon',authorInitials:'DC',authorAccent:'#3B82F6',isAdmin:true,postType:'congrats',title:'Big Weekend at Nevada State Championships',body:'Our competition team brought home 4 gold medals and 2 silvers at the Nevada State Championships this past weekend. Incredible work — you make Momentum proud!',photo:null,date:'2026-05-03T09:00:00',pinned:false,edited:false},
+  {id:'dp3',authorId:'m1',authorName:'Alex Rivera',authorInitials:'AR',authorAccent:'#2563EB',isAdmin:false,postType:'forsale',title:'',body:'Selling 2 tickets to the Nevada Combat Sports event on May 17th — front row seats, $40 each. DM me or catch me before class if interested! 🥊',photo:null,date:'2026-05-04T14:30:00',pinned:false,edited:false},
+  {id:'dp4',authorId:'m2',authorName:'Jordan Kim',authorInitials:'JK',authorAccent:'#4F46E5',isAdmin:false,postType:'lostfound',title:'',body:'Did anyone find a pair of black Hayabusa gloves? I think I left them by the heavy bags after Tuesday evening class. Please let me know!',photo:null,date:'2026-05-02T19:00:00',pinned:false,edited:false},
+  {id:'dp5',authorId:'admin1',authorName:'Darien Cobon',authorInitials:'DC',authorAccent:'#3B82F6',isAdmin:true,postType:'reminder',title:'Memorial Day — Gym Closed May 27th',body:'The gym will be CLOSED on Memorial Day, Monday May 27th. Regular schedule resumes Tuesday May 28th. Enjoy the holiday and we will see you back on the mats!',photo:null,date:'2026-05-01T08:00:00',pinned:true,edited:false},
+  {id:'dp6',authorId:'admin1',authorName:'Darien Cobon',authorInitials:'DC',authorAccent:'#3B82F6',isAdmin:true,postType:'challenge',title:'May Challenge: 100 Takedowns a Week',body:'Build those wrestling fundamentals! Log your takedown reps with any instructor throughout May. Top 3 members at the end of the month win free gear from the pro shop.',photo:null,date:'2026-05-01T07:00:00',pinned:false,edited:false},
+]
+
+const PROGRAMS = [
+  {id:'foundations-mma',name:'Foundations MMA',     tagline:'Where it all starts',       desc:'Learn the fundamentals of striking, clinch work, takedowns, and ground fighting. No experience required — this class builds the base for everything.',levels:['Beginner','Intermediate'],type:'mma',    icon:'🥊',highlights:['Striking fundamentals','Clinch & takedowns','Ground control','Live drilling']},
+  {id:'advanced-mma',   name:'Advanced MMA',         tagline:'Sharpen your weapons',       desc:'Full MMA sparring integrating all disciplines. Students must have demonstrated proficiency in Foundations before joining.',levels:['Intermediate','Advanced'],type:'mma',    icon:'⚡',highlights:['Full sparring','Competition prep','All ranges','Fight strategy']},
+  {id:'bjj-foundations',name:'BJJ Foundations',      tagline:'The art of leverage',        desc:'Authentic Gracie Jiu-Jitsu taught by Prof. Darien Cobon, a private student of Master Rickson Gracie. Real self-defense through the BJJ system.',levels:['All levels'],type:'bjj',    icon:'🥋',highlights:['Rickson Gracie lineage','Self-defense focus','Positional control','Submissions']},
+  {id:'bjj-advanced',   name:'BJJ Advanced & Comp',  tagline:'Compete at the highest level',desc:'Advanced techniques and competition strategies for those ready to test their Brazilian Jiu-Jitsu on the tournament floor.',levels:['Intermediate','Advanced'],type:'bjj',    icon:'🏆',highlights:['Competition strategy','Advanced sweeps & subs','Strength & conditioning','Tournament prep']},
+  {id:'muay-thai',      name:'Muay Thai',             tagline:'The art of eight limbs',     desc:'Traditional Muay Thai striking combining punches, elbows, knees, and kicks. Build devastating stand-up skills with a world-class coaching staff.',levels:['All levels'],type:'muaythai',icon:'🦵',highlights:['Punches & kicks','Elbows & knees','Clinch striking','Pad work']},
+  {id:'boxing',         name:'Boxing',                tagline:'The sweet science',          desc:'From footwork and defense to power combinations, our boxing program sharpens fundamentals that translate into every other discipline.',levels:['All levels'],type:'boxing',  icon:'🥊',highlights:['Footwork & defense','Combination work','Sparring','Bag work']},
+  {id:'momentum-fitness',name:'Momentum Fitness',    tagline:'Strength meets movement',    desc:'Functional training — HIIT, functional strength, full-body circuits, bag classes, and yoga. For athletes and non-athletes alike.',levels:['All levels'],type:'fitness',  icon:'🔥',highlights:['HIIT circuits','Functional strength','Bag classes','Yoga']},
+  {id:'kids-mma',       name:'Kids MMA',              tagline:'Building champions young',   desc:'A safe, structured program teaching kids aged 4–12 the same fundamentals as adults — scaled for their development. Builds confidence, discipline, and respect.',levels:['Ninjas (4–7)','Kids (8–12)'],type:'kids',    icon:'⭐',highlights:['Age-appropriate curriculum','Confidence building','Anti-bullying tools','Discipline & respect']},
+]
+
+const PRIV_INSTRUCTORS = [
+  {id:'dc',name:'Darien Cobon',  role:'Head Instructor',    initials:'DC',accent:'#3B82F6',discs:['BJJ','MMA','Muay Thai','Self-Defense'],  slots:['9:00 AM','10:00 AM','11:00 AM']},
+  {id:'db',name:'Damien Blotzke',role:'MMA & Boxing',       initials:'DB',accent:'#2563EB',discs:['MMA','Boxing','Wrestling'],              slots:['9:00 AM','10:00 AM','11:00 AM','12:00 PM','1:00 PM','2:00 PM']},
+  {id:'gm',name:'Gabe Morris',   role:'MMA & Jiu-Jitsu',   initials:'GM',accent:'#4F46E5',discs:['MMA','BJJ','Fitness'],                   slots:['9:00 AM','10:00 AM','11:00 AM','12:00 PM','1:00 PM','2:00 PM','3:00 PM']},
+  {id:'kc',name:'Katie Cobon',   role:'Muay Thai & Fitness',initials:'KC',accent:'#0EA5E9',discs:['Muay Thai','Fitness'],                   slots:['9:00 AM','10:00 AM','11:00 AM','12:00 PM','1:00 PM']},
+]
+
+const SEED_USERS = [
+  {id:'admin1',name:'Darien Cobon', email:'admin@momentummma.com',password:'admin123',role:'admin',  initials:'DC',accent:'#3B82F6',belt:'Black Belt',since:'2015-01-01',discs:['bjj','mma','muaythai']},
+  {id:'m1',    name:'Alex Rivera',  email:'alex@demo.com',         password:'member123',role:'member',initials:'AR',accent:'#2563EB',belt:'Blue Belt', since:'2023-03-15',discs:['bjj','mma']},
+  {id:'m2',    name:'Jordan Kim',   email:'jordan@demo.com',       password:'member123',role:'member',initials:'JK',accent:'#4F46E5',belt:'White Belt',since:'2024-11-20',discs:['muaythai','fitness']},
+  {id:'m3',    name:'Sam Torres',   email:'sam@demo.com',          password:'member123',role:'member',initials:'ST',accent:'#0EA5E9',belt:'Purple Belt',since:'2022-06-10',discs:['bjj','boxing']},
+  {id:'m4',    name:'Casey Walsh',  email:'casey@demo.com',        password:'member123',role:'member',initials:'CW',accent:'#6366F1',belt:'White Belt',since:'2025-01-08',discs:['kids','fitness']},
+]
+
+// ══════════════════════════════════════════════════════
+// STORAGE
+// ══════════════════════════════════════════════════════
+
+function ld(k,d){try{const v=localStorage.getItem(k);return v!==null?JSON.parse(v):d}catch{return d}}
+function sv(k,v){localStorage.setItem(k,JSON.stringify(v))}
+
+// Only seeds once; never overwrites user-created data
+function initData(){
+  if(!ld('mma_users',null)){sv('mma_users',SEED_USERS)}
+  if(!ld('mma_attendance_seeded',false)){
+    sv('att_Monday_Foundations MMA_7:30 PM',['m1','m2'])
+    sv('att_Monday_Muay Thai_8:30 PM',['m2','m3'])
+    sv('att_Thursday_BJJ Comp Team_8:30 PM',['m1','m3','m4'])
+    sv('att_Wednesday_BJJ Foundations_7:30 PM',['m1','m4'])
+    sv('att_Friday_Advanced MMA_10:00 AM',['m1','m3'])
+    sv('mma_attendance_seeded',true)
+  }
+  if(!ld('mma_bookings_seeded',false)){
+    sv('mma_bookings',[
+      {id:'bk1',userId:'m2',instructorId:'dc',instructorName:'Darien Cobon',date:'2026-05-10',time:'10:00 AM',status:'confirmed'},
+      {id:'bk2',userId:'m3',instructorId:'kc',instructorName:'Katie Cobon',date:'2026-05-14',time:'11:00 AM',status:'confirmed'},
+    ])
+    sv('mma_bookings_seeded',true)
+  }
+}
+
+const getUsers    = ()=>ld('mma_users',SEED_USERS)
+const getUserById = id=>getUsers().find(u=>u.id===id)??null
+const tryLogin    = (email,pw)=>getUsers().find(u=>u.email.toLowerCase()===email.toLowerCase()&&u.password===pw)??null
+const emailTaken  = email=>getUsers().some(u=>u.email.toLowerCase()===email.toLowerCase())
+
+function registerUser(data){
+  const users=getUsers()
+  const colorIdx=users.length%AVATAR_COLORS.length
+  const newUser={
+    id:'u'+Date.now(),
+    name:data.name,
+    email:data.email,
+    password:data.password,
+    role:'member',
+    initials:data.name.trim().split(/\s+/).map(w=>w[0].toUpperCase()).slice(0,2).join(''),
+    accent:AVATAR_COLORS[colorIdx],
+    belt:data.belt||'White Belt',
+    since:new Date().toISOString().slice(0,10),
+    discs:data.discs||[],
+  }
+  sv('mma_users',[...users,newUser])
+  return newUser
+}
+
+const getSchedule = ()=>ld('mma_schedule',DEFAULT_SCHEDULE)
+const saveSchedule= s=>sv('mma_schedule',s)
+const getPosts    = ()=>ld('mma_posts',DEFAULT_POSTS)
+const savePosts   = p=>sv('mma_posts',p)
+const getAtt      = (day,name,time)=>ld(`att_${day}_${name}_${time}`,[])
+const toggleAtt   = (day,name,time,uid)=>{const k=`att_${day}_${name}_${time}`;const cur=ld(k,[]);const nxt=cur.includes(uid)?cur.filter(x=>x!==uid):[...cur,uid];sv(k,nxt);return nxt}
+const getBookings = ()=>ld('mma_bookings',[])
+const saveBookings= b=>sv('mma_bookings',b)
+
+// ══════════════════════════════════════════════════════
+// HELPERS
+// ══════════════════════════════════════════════════════
+
+function getTodayIdx(){return [6,0,1,2,3,4,5][new Date().getDay()]}
+function isPastDate(d){const t=new Date();t.setHours(0,0,0,0);return d<t}
+function isToday(d){const t=new Date();return d.getFullYear()===t.getFullYear()&&d.getMonth()===t.getMonth()&&d.getDate()===t.getDate()}
+function fmtDate(d){return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`}
+function fmtDateDisplay(d){return d.toLocaleDateString('en-US',{weekday:'long',month:'long',day:'numeric'})}
+function timeAgo(ds){const diff=Math.floor((Date.now()-new Date(ds).getTime())/1000);if(diff<60)return 'Just now';if(diff<3600)return `${Math.floor(diff/60)}m ago`;if(diff<86400)return `${Math.floor(diff/3600)}h ago`;const days=Math.floor(diff/86400);if(days===1)return 'Yesterday';if(days<7)return `${days}d ago`;if(days<30)return `${Math.floor(days/7)}w ago`;return new Date(ds).toLocaleDateString('en-US',{month:'short',day:'numeric'})}
+function isClassPast(t){const[tp,per]=t.split(' ');let[h,m]=tp.split(':').map(Number);if(per==='PM'&&h!==12)h+=12;if(per==='AM'&&h===12)h=0;const n=new Date();return h*60+m<n.getHours()*60+n.getMinutes()}
+function ruid(){return Math.random().toString(36).slice(2)}
+function buildCalDays(ms){const y=ms.getFullYear(),mo=ms.getMonth();const fd=ms.getDay();const off=fd===0?6:fd-1;const dim=new Date(y,mo+1,0).getDate();const days=[];for(let i=0;i<off;i++)days.push(null);for(let d=1;d<=dim;d++)days.push(new Date(y,mo,d));return days}
+
+// ══════════════════════════════════════════════════════
+// LOGIN SCREEN
+// ══════════════════════════════════════════════════════
+
+function LoginScreen({onLogin}){
+  const[mode,setMode]=useState('login') // 'login' | 'register'
+  const[email,setEmail]=useState('')
+  const[pw,setPw]=useState('')
+  const[err,setErr]=useState('')
+
+  // Register fields
+  const[name,setName]=useState('')
+  const[pw2,setPw2]=useState('')
+  const[belt,setBelt]=useState('White Belt')
+  const[discs,setDiscs]=useState([])
+
+  function toggleDisc(d){setDiscs(p=>p.includes(d)?p.filter(x=>x!==d):[...p,d])}
+
+  function handleLogin(e){
+    e.preventDefault()
+    const u=tryLogin(email,pw)
+    if(u)onLogin(u)
+    else setErr('Invalid email or password')
+  }
+
+  function handleRegister(e){
+    e.preventDefault()
+    if(!name.trim()){setErr('Please enter your full name');return}
+    if(!email.trim()){setErr('Please enter your email');return}
+    if(pw.length<6){setErr('Password must be at least 6 characters');return}
+    if(pw!==pw2){setErr('Passwords do not match');return}
+    if(emailTaken(email)){setErr('An account with that email already exists');return}
+    const u=registerUser({name:name.trim(),email:email.trim(),password:pw,belt,discs})
+    onLogin(u)
+  }
+
+  function switchMode(m){setMode(m);setErr('');setEmail('');setPw('');setName('');setPw2('')}
+
+  const demos=getUsers()
+
+  return(
+    <div className="auth-wrap">
+      <div className="auth-logo">
+        <img className="auth-m" src="data:image/jpeg;base64,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" alt="Momentum Martial Arts" />
+        <span className="auth-title">MOMENTUM</span>
+        <span className="auth-sub">Members Portal</span>
+      </div>
+
+      {mode==='login'?(
+        <>
+          <form className="auth-form" onSubmit={handleLogin}>
+            <input className="auth-input" type="email" placeholder="Email address" value={email} onChange={e=>setEmail(e.target.value)} autoComplete="email"/>
+            <input className="auth-input" type="password" placeholder="Password" value={pw} onChange={e=>setPw(e.target.value)} autoComplete="current-password"/>
+            {err&&<div className="auth-err">{err}</div>}
+            <button type="submit" className="auth-btn">Sign In</button>
+          </form>
+          <div className="auth-switch">
+            Don't have an account?
+            <button className="auth-switch-btn" onClick={()=>switchMode('register')}>Create one</button>
+          </div>
+          <div className="demo-section">
+            <div className="demo-label">Quick Demo Login</div>
+            <div className="demo-btns">
+              {demos.map(u=>(
+                <button key={u.id} className="demo-btn" onClick={()=>onLogin(u)}>
+                  <div className="demo-av" style={{background:u.accent}}>{u.initials}</div>
+                  <div className="demo-info">
+                    <div className="demo-name">{u.name}</div>
+                    <div className="demo-role">{u.role==='admin'?'Admin':'Member'} · {u.belt}</div>
+                  </div>
+                </button>
+              ))}
+            </div>
+          </div>
+        </>
+      ):(
+        <>
+          <form className="auth-form" onSubmit={handleRegister}>
+            <input className="auth-input" type="text" placeholder="Full name" value={name} onChange={e=>setName(e.target.value)} autoComplete="name"/>
+            <input className="auth-input" type="email" placeholder="Email address" value={email} onChange={e=>setEmail(e.target.value)} autoComplete="email"/>
+            <input className="auth-input" type="password" placeholder="Password (min 6 characters)" value={pw} onChange={e=>setPw(e.target.value)} autoComplete="new-password"/>
+            <input className="auth-input" type="password" placeholder="Confirm password" value={pw2} onChange={e=>setPw2(e.target.value)} autoComplete="new-password"/>
+            <select className="auth-select" value={belt} onChange={e=>setBelt(e.target.value)}>
+              {BELT_OPTIONS.map(b=><option key={b} value={b}>{b}</option>)}
+            </select>
+            <div>
+              <span className="disc-label">Disciplines you train (optional)</span>
+              <div className="disc-pills">
+                {Object.entries(CT).filter(([k])=>k!=='openmat').map(([k,v])=>(
+                  <button type="button" key={k} className={`disc-pill${discs.includes(k)?' on':''}`} onClick={()=>toggleDisc(k)}>{v.label}</button>
+                ))}
+              </div>
+            </div>
+            {err&&<div className="auth-err">{err}</div>}
+            <button type="submit" className="auth-btn">Create Account</button>
+          </form>
+          <div className="auth-switch">
+            Already have an account?
+            <button className="auth-switch-btn" onClick={()=>switchMode('login')}>Sign in</button>
+          </div>
+        </>
+      )}
+    </div>
+  )
+}
+
+// ══════════════════════════════════════════════════════
+// SCHEDULE
+// ══════════════════════════════════════════════════════
+
+function SchedulePage({user}){
+  const[selDay,setSelDay]=useState(getTodayIdx())
+  const today=getTodayIdx()
+  const btnRefs=useRef([])
+  const[attState,setAttState]=useState({})
+  const[expanded,setExpanded]=useState(null)
+  const schedule=getSchedule()
+  const allUsers=getUsers()
+
+  useEffect(()=>{
+    const s={}
+    Object.entries(schedule).forEach(([day,classes])=>{
+      classes.forEach(cls=>{s[`${day}_${cls.name}_${cls.time}`]=getAtt(day,cls.name,cls.time)})
+    })
+    setAttState(s)
+  },[])
+
+  useEffect(()=>{btnRefs.current[selDay]?.scrollIntoView({behavior:'smooth',block:'nearest',inline:'center'})},[selDay])
+
+  const dayName=DAYS[selDay]
+  const classes=schedule[dayName]||[]
+
+  function toggle(cls){
+    const newList=toggleAtt(dayName,cls.name,cls.time,user.id)
+    setAttState(p=>({...p,[`${dayName}_${cls.name}_${cls.time}`]:newList}))
+  }
+
+  function renderAtt(cls){
+    const k=`${dayName}_${cls.name}_${cls.time}`
+    const list=attState[k]||[]
+    const iGoing=list.includes(user.id)
+    const isExp=expanded===k
+    const members=list.map(id=>getUserById(id)).filter(Boolean)
+    return(
+      <div>
+        <div className="att-row">
+          <button className={`att-go${iGoing?' on':''}`} onClick={()=>toggle(cls)}>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+              {iGoing?<polyline points="20 6 9 17 4 12"/>:<circle cx="12" cy="12" r="10"/>}
+            </svg>
+            {iGoing?'Going':'Going?'}
+          </button>
+          <button className="att-who" onClick={()=>setExpanded(isExp?null:k)}>
+            {list.length>0?`${list.length} going`:'Be first'}
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className={isExp?'open':''}>
+              <polyline points="6 9 12 15 18 9"/>
+            </svg>
+          </button>
+        </div>
+        {isExp&&(
+          list.length===0
+            ?<div className="att-first">No one signed up yet — be the first!</div>
+            :<div className="att-members">
+              {members.map(m=>(
+                <div key={m.id} className="att-pill">
+                  <div className="att-av" style={{background:m.accent}}>{m.initials}</div>
+                  {m.name.split(' ')[0]}
+                </div>
+              ))}
+            </div>
+        )}
+      </div>
+    )
+  }
+
+  return(
+    <div>
+      <div className="dsel-wrap">
+        <div className="dsel">
+          {DAYS.map((d,i)=>(
+            <button key={d} ref={el=>btnRefs.current[i]=el} className={`dbtn${selDay===i?' on':''}`} onClick={()=>setSelDay(i)}>
+              <span>{d.slice(0,3)}</span>
+              {i===today&&<span className="tdot"/>}
+            </button>
+          ))}
+        </div>
+      </div>
+      <div className="dhead">
+        <h2 className="dname">{dayName}{selDay===today&&<span className="tbadge">Today</span>}</h2>
+        <span className="ccount">{classes.length} class{classes.length!==1?'es':''}</span>
+      </div>
+      <div className="clist">
+        {classes.length===0?(
+          <div className="no-cls"><span className="ico">🥋</span><p>No classes scheduled</p><p className="sub">Rest up!</p></div>
+        ):classes.map((cls,i)=>{
+          const past=selDay===today&&isClassPast(cls.time)
+          const[tp,per]=cls.time.split(' ')
+          if(cls.compTeam)return(
+            <div key={i} className={`ccard${past?' past':''}`} style={{border:'1px solid var(--gold)'}}>
+              <div className="ccard-top">
+                <div className="ctime"><span className="tmain">{tp}</span><span className="tper">{per}</span><span className="tdur">{cls.duration}m</span></div>
+                <div className="cbar-gold"/>
+                <div className="cinfo">
+                  <span className="cname">{cls.name}</span>
+                  <span className="caud">{cls.audience}</span>
+                  <span className="ctbadge" style={{color:'var(--gold)',background:'var(--gdim)'}}>🏆 Comp Team</span>
+                </div>
+              </div>
+              {renderAtt(cls)}
+            </div>
+          )
+          const t=CT[cls.type]
+          return(
+            <div key={i} className={`ccard${past?' past':''}`}>
+              <div className="ccard-top">
+                <div className="ctime"><span className="tmain">{tp}</span><span className="tper">{per}</span><span className="tdur">{cls.duration}m</span></div>
+                <div className="cbar" style={{background:t.c}}/>
+                <div className="cinfo">
+                  <span className="cname">{cls.name}</span>
+                  <span className="caud">{cls.audience}</span>
+                  <span className="ctbadge" style={{color:t.c,background:t.bg}}>{t.label}</span>
+                </div>
+              </div>
+              {renderAtt(cls)}
+            </div>
+          )
+        })}
+      </div>
+      <div className="sched-disc">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+        Schedule may change — confirm at front desk or <a href="https://clients.mindbodyonline.com/classic/ws?studioid=961895" target="_blank" rel="noreferrer" className="disc-link">MindBody</a>
+      </div>
+    </div>
+  )
+}
+
+// ══════════════════════════════════════════════════════
+// ANNOUNCEMENTS
+// ══════════════════════════════════════════════════════
+
+function FeedPage({user}){
+  const[posts,setPosts]=useState(getPosts)
+  const[menuOpen,setMenuOpen]=useState(null)
+  const[composerOpen,setComposerOpen]=useState(false)
+  const[editingPost,setEditingPost]=useState(null)
+  const BLANK_DRAFT={body:'',photo:null,title:'',pinned:false,postType:'post'}
+  const[draft,setDraft]=useState(BLANK_DRAFT)
+  const fileRef=React.useRef(null)
+
+  const pinned=posts.filter(p=>p.pinned).sort((a,b)=>b.date.localeCompare(a.date))
+  const feed=posts.filter(p=>!p.pinned).sort((a,b)=>b.date.localeCompare(a.date))
+
+  function openComposer(){setEditingPost(null);setDraft(BLANK_DRAFT);setComposerOpen(true)}
+  function openEdit(post){setEditingPost(post);setDraft({body:post.body,photo:post.photo,title:post.title||'',pinned:post.pinned,postType:post.postType});setComposerOpen(true);setMenuOpen(null)}
+
+  function handlePhoto(e){
+    const f=e.target.files[0];if(!f)return
+    const r=new FileReader();r.onload=ev=>setDraft(d=>({...d,photo:ev.target.result}));r.readAsDataURL(f)
+    e.target.value=''
+  }
+
+  function submit(){
+    if(!draft.body.trim()&&!draft.photo)return
+    if(editingPost){
+      const u=posts.map(p=>p.id===editingPost.id?{...p,body:draft.body,photo:draft.photo,title:draft.title,pinned:user.role==='admin'?draft.pinned:p.pinned,postType:draft.postType,edited:true}:p)
+      savePosts(u);setPosts(u)
+    } else {
+      const np={id:'p'+Date.now(),authorId:user.id,authorName:user.name,authorInitials:user.initials,authorAccent:user.accent,isAdmin:user.role==='admin',postType:draft.postType||'post',title:user.role==='admin'?draft.title:'',body:draft.body,photo:draft.photo,date:new Date().toISOString(),pinned:user.role==='admin'&&draft.pinned,edited:false}
+      const u=[np,...posts];savePosts(u);setPosts(u)
+    }
+    setComposerOpen(false);setEditingPost(null);setDraft(BLANK_DRAFT)
+  }
+
+  function deletePost(id){
+    if(!window.confirm('Delete this post?'))return
+    const u=posts.filter(p=>p.id!==id);savePosts(u);setPosts(u);setMenuOpen(null)
+  }
+
+  function PostCard({post}){
+    const isOwn=post.authorId===user.id||user.role==='admin'
+    const isMenuOpen=menuOpen===post.id
+    const pt=POST_TYPES[post.postType]||POST_TYPES.post
+    const hasTitle=post.isAdmin&&post.title
+    return(
+      <div className="post-card" onClick={()=>isMenuOpen&&setMenuOpen(null)}>
+        {post.pinned&&<div className="post-pin-bar"/>}
+        <div className="post-hdr">
+          <div className="post-avatar" style={{background:post.authorAccent}}>{post.authorInitials}</div>
+          <div className="post-info">
+            <div className="post-name">{post.authorName}{post.isAdmin&&<span className="post-staff-badge">STAFF</span>}</div>
+            <div className="post-meta">{timeAgo(post.date)}{post.edited?' · edited':''}{post.pinned?' · 📌':''}</div>
+          </div>
+          {isOwn&&<button className="post-menu-btn" onClick={e=>{e.stopPropagation();setMenuOpen(isMenuOpen?null:post.id)}}>⋯</button>}
+        </div>
+        {isMenuOpen&&(
+          <div className="post-menu-dd">
+            <button onClick={e=>{e.stopPropagation();openEdit(post)}}>✏️ Edit</button>
+            <button className="del-btn" onClick={e=>{e.stopPropagation();deletePost(post.id)}}>🗑 Delete</button>
+          </div>
+        )}
+        {post.postType!=='post'&&<span className="post-type-tag" style={{color:pt.ac,background:`${pt.ac}18`}}>{pt.icon} {pt.label}</span>}
+        {hasTitle&&<div className="post-title">{post.title}</div>}
+        {post.photo&&<img className="post-photo" src={post.photo} alt=""/>}
+        {post.body&&<p className={`post-body${(hasTitle||post.photo)?' no-top':''}`}>{post.body}</p>}
+      </div>
+    )
+  }
+
+  return(
+    <div className="feed-wrap">
+      <div className="feed-composer-bar" onClick={openComposer}>
+        <div className="feed-composer-av" style={{background:user.accent}}>{user.initials}</div>
+        <span className="feed-composer-ph">Share something with the gym...</span>
+      </div>
+
+      {pinned.map(p=><PostCard key={p.id} post={p}/>)}
+      {feed.map(p=><PostCard key={p.id} post={p}/>)}
+
+      {composerOpen&&(
+        <div className="form-overlay" onClick={e=>e.target===e.currentTarget&&setComposerOpen(false)}>
+          <div className="form-sheet">
+            <div className="form-drag"/>
+            <div className="form-title">{editingPost?'Edit Post':'New Post'}</div>
+
+            {user.role==='admin'&&(
+              <div className="form-group">
+                <label className="form-label">Post Type</label>
+                <select className="form-select" value={draft.postType} onChange={e=>setDraft(d=>({...d,postType:e.target.value}))}>
+                  {Object.entries(POST_TYPES).map(([k,v])=><option key={k} value={k}>{v.icon} {v.label}</option>)}
+                </select>
+              </div>
+            )}
+            {user.role==='admin'&&draft.postType!=='post'&&(
+              <div className="form-group">
+                <label className="form-label">Title (optional)</label>
+                <input className="form-input" value={draft.title} onChange={e=>setDraft(d=>({...d,title:e.target.value}))} placeholder="Post title..."/>
+              </div>
+            )}
+            <div className="form-group">
+              <label className="form-label">Message</label>
+              <textarea className="form-textarea" value={draft.body} onChange={e=>setDraft(d=>({...d,body:e.target.value}))} placeholder="What's on your mind?" style={{minHeight:100}}/>
+            </div>
+            {draft.photo&&<img className="post-photo-prev" src={draft.photo} alt="preview"/>}
+            <div className="composer-actions">
+              <button className="composer-photo-btn" onClick={()=>fileRef.current.click()}>
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+                {draft.photo?'Change Photo':'Add Photo'}
+              </button>
+              {draft.photo&&<button className="composer-remove-btn" onClick={()=>setDraft(d=>({...d,photo:null}))}>Remove</button>}
+              {user.role==='admin'&&(
+                <button className={`form-toggle${draft.pinned?' on':' off'}`} style={{marginLeft:'auto'}} onClick={()=>setDraft(d=>({...d,pinned:!d.pinned}))} title="Pin post"/>
+              )}
+            </div>
+            <input ref={fileRef} type="file" accept="image/*" style={{display:'none'}} onChange={handlePhoto}/>
+            <div className="form-btns" style={{marginTop:16}}>
+              <button className="form-cancel" onClick={()=>setComposerOpen(false)}>Cancel</button>
+              <button className="form-save" onClick={submit}>{editingPost?'Save':'Post'}</button>
+            </div>
+          </div>
+        </div>
+      )}
+    </div>
+  )
+}
+
+// ══════════════════════════════════════════════════════
+// PROGRAMS
+// ══════════════════════════════════════════════════════
+
+function ProgramsPage(){
+  const[sel,setSel]=useState(null)
+  const prog=sel?PROGRAMS.find(p=>p.id===sel):null
+  if(prog){
+    const t=CT[prog.type]
+    return(
+      <div className="prog-wrap">
+        <button className="prog-back" onClick={()=>setSel(null)}><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><polyline points="15 18 9 12 15 6"/></svg>All Programs</button>
+        <div className="prog-dh"><span className="prog-dico">{prog.icon}</span><span className="prog-badge" style={{color:t.c,background:t.bg}}>{t.label}</span><h2 className="prog-dnm">{prog.name}</h2><p className="prog-dtl">{prog.tagline}</p></div>
+        <div className="prog-dbody">
+          <p className="prog-ddesc">{prog.desc}</p>
+          <div><h3 className="prog-stitle">What You'll Learn</h3><div className="prog-hls">{prog.highlights.map((h,i)=><div key={i} className="prog-hl"><span className="prog-dot" style={{background:t.c}}/><span>{h}</span></div>)}</div></div>
+          <div><h3 className="prog-stitle">Levels</h3><div className="prog-lvls">{prog.levels.map((l,i)=><span key={i} className="prog-lvl">{l}</span>)}</div></div>
+        </div>
+      </div>
+    )
+  }
+  return(
+    <div className="prog-wrap">
+      <div className="prog-intro"><h2 className="prog-ititle">Our Programs</h2><p className="prog-isub">World-class instruction across all disciplines</p></div>
+      <div className="prog-grid">
+        {PROGRAMS.map(p=>{const t=CT[p.type];return(
+          <div key={p.id} className="prog-card" onClick={()=>setSel(p.id)}>
+            <div className="prog-tbar" style={{background:t.c}}/><span className="prog-ico">{p.icon}</span>
+            <span className="prog-badge" style={{color:t.c,background:t.bg}}>{t.label}</span>
+            <span className="prog-nm">{p.name}</span><span className="prog-tline">{p.tagline}</span>
+            <span className="prog-arr"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><polyline points="9 18 15 12 9 6"/></svg></span>
+          </div>
+        )})}
+      </div>
+    </div>
+  )
+}
+
+// ══════════════════════════════════════════════════════
+// PRIVATE LESSONS
+// ══════════════════════════════════════════════════════
+
+function PrivatePage({user}){
+  const[instId,setInstId]=useState(PRIV_INSTRUCTORS[0].id)
+  const[calMonth,setCalMonth]=useState(()=>{const n=new Date();return new Date(n.getFullYear(),n.getMonth(),1)})
+  const[selDate,setSelDate]=useState(null)
+  const[bookings,setBookings]=useState(getBookings)
+  const inst=PRIV_INSTRUCTORS.find(i=>i.id===instId)
+  const calDays=buildCalDays(calMonth)
+  const myBookings=bookings.filter(b=>b.userId===user.id)
+  const today=new Date();today.setHours(0,0,0,0)
+
+  function hasMyBookingOn(date){const ds=fmtDate(date);return myBookings.some(b=>b.instructorId===instId&&b.date===ds)}
+  function getSlotStatus(date,time){
+    const ds=fmtDate(date)
+    const mine=bookings.find(b=>b.instructorId===instId&&b.date===ds&&b.time===time&&b.userId===user.id)
+    if(mine)return{status:'mine',booking:mine}
+    const taken=bookings.find(b=>b.instructorId===instId&&b.date===ds&&b.time===time)
+    if(taken)return{status:'taken'}
+    return{status:'available'}
+  }
+  function book(date,time){
+    const nb={id:'bk'+ruid(),userId:user.id,instructorId:instId,instructorName:inst.name,date:fmtDate(date),time,status:'confirmed'}
+    const u=[...bookings,nb];saveBookings(u);setBookings(u)
+  }
+  function cancel(bkId){const u=bookings.filter(b=>b.id!==bkId);saveBookings(u);setBookings(u)}
+
+  return(
+    <div className="priv-wrap">
+      <div className="priv-inst-row">
+        {PRIV_INSTRUCTORS.map(i=>(
+          <button key={i.id} className={`priv-ibtn${instId===i.id?' on':''}`} onClick={()=>{setInstId(i.id);setSelDate(null)}}>
+            <div className="priv-iav" style={{background:i.accent}}>{i.initials}</div>
+            <div><div className="priv-iname">{i.name.split(' ')[0]}</div><div className="priv-ispec">{i.discs[0]}</div></div>
+          </button>
+        ))}
+      </div>
+
+      {myBookings.filter(b=>b.instructorId===instId&&b.date>=fmtDate(today)).length>0&&(
+        <div className="my-bk-sec">
+          <div className="sec-ttl">Your Upcoming Lessons</div>
+          {myBookings.filter(b=>b.instructorId===instId&&b.date>=fmtDate(today)).sort((a,b)=>a.date.localeCompare(b.date)).map(bk=>(
+            <div key={bk.id} className="bk-card">
+              <div className="bk-dot" style={{background:inst.accent}}/>
+              <div className="bk-info"><div className="bk-who">{bk.instructorName}</div><div className="bk-when">{fmtDateDisplay(new Date(bk.date+'T12:00:00'))} · {bk.time}</div></div>
+              <button className="bk-cancel" onClick={()=>cancel(bk.id)}>Cancel</button>
+            </div>
+          ))}
+        </div>
+      )}
+
+      <div className="cal-wrap">
+        <div className="cal-hdr">
+          <button className="cal-nav" onClick={()=>setCalMonth(d=>new Date(d.getFullYear(),d.getMonth()-1,1))}><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><polyline points="15 18 9 12 15 6"/></svg></button>
+          <span className="cal-mnth">{calMonth.toLocaleDateString('en-US',{month:'long',year:'numeric'})}</span>
+          <button className="cal-nav" onClick={()=>setCalMonth(d=>new Date(d.getFullYear(),d.getMonth()+1,1))}><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><polyline points="9 18 15 12 9 6"/></svg></button>
+        </div>
+        <div className="cal-grid">
+          {['Mo','Tu','We','Th','Fr','Sa','Su'].map(d=><div key={d} className="cal-dow">{d}</div>)}
+          {calDays.map((d,i)=>{
+            if(!d)return<div key={i}/>
+            const disabled=isPastDate(d)||d.getDay()===0
+            const sel=selDate&&fmtDate(selDate)===fmtDate(d)
+            const hasBk=hasMyBookingOn(d)
+            let cls='cal-day'+(d.getDay()!==0?' cur':'')+(isToday(d)?' today':'')+(sel?' sel':'')+(disabled?' dis':'')+(hasBk?' hasbk':'')
+            return <button key={i} className={cls} onClick={()=>!disabled&&setSelDate(d)}>{d.getDate()}</button>
+          })}
+        </div>
+      </div>
+
+      {selDate&&(
+        <div className="slots-wrap">
+          <div className="slots-date-hdr">{fmtDateDisplay(selDate)}</div>
+          {inst.slots.map(time=>{
+            const{status,booking:bk}=getSlotStatus(selDate,time)
+            return(
+              <div key={time} className="slot-row">
+                <span className="slot-time">{time}</span>
+                <span className={`slot-status${status==='mine'?' mine':status==='taken'?' taken':''}`}>
+                  {status==='mine'?'Your lesson':status==='taken'?'Unavailable':'Available'}
+                </span>
+                {status==='available'&&<button className="slot-book-btn" onClick={()=>book(selDate,time)}>Book</button>}
+                {status==='mine'&&<button className="slot-cancel-btn" onClick={()=>cancel(bk.id)}>Cancel</button>}
+              </div>
+            )
+          })}
+        </div>
+      )}
+    </div>
+  )
+}
+
+// ══════════════════════════════════════════════════════
+// PROFILE
+// ══════════════════════════════════════════════════════
+
+function ProfilePage({user,onLogout,onAdmin}){
+  const bookings=getBookings().filter(b=>b.userId===user.id)
+  const today=new Date();today.setHours(0,0,0,0)
+  const upcoming=bookings.filter(b=>b.date>=fmtDate(today)).sort((a,b)=>a.date.localeCompare(b.date))
+  const instMap=Object.fromEntries(PRIV_INSTRUCTORS.map(i=>[i.id,i]))
+  return(
+    <div className="prof-wrap">
+      <div className="prof-hero">
+        <div className="prof-av" style={{background:user.accent}}>{user.initials}</div>
+        <div className="prof-name">{user.name}</div>
+        <div className="prof-belt">{user.belt}</div>
+        <div className="prof-since">Member since {new Date(user.since+'T12:00:00').toLocaleDateString('en-US',{month:'long',year:'numeric'})}</div>
+        {user.discs?.length>0&&<div className="prof-discs">{user.discs.map(d=>{const t=CT[d];return t?<span key={d} className="prof-disc" style={{color:t.c,background:t.bg}}>{t.label}</span>:null})}</div>}
+      </div>
+
+      {upcoming.length>0&&(
+        <div className="prof-sec">
+          <div className="prof-stitle">Upcoming Privates</div>
+          <div className="prof-card">
+            {upcoming.map((bk,i)=>{
+              const inst=instMap[bk.instructorId]
+              return(
+                <div key={bk.id}>
+                  {i>0&&<div className="prof-divider"/>}
+                  <div className="prof-row">
+                    {inst&&<div style={{width:36,height:36,borderRadius:8,background:inst.accent,display:'flex',alignItems:'center',justifyContent:'center',fontFamily:'var(--fd)',fontWeight:900,fontSize:13,color:'#fff',flexShrink:0}}>{inst.initials}</div>}
+                    <div style={{flex:1}}><div style={{fontSize:14,fontWeight:600}}>{bk.instructorName}</div><div style={{fontSize:12,color:'var(--t2)',marginTop:2}}>{fmtDateDisplay(new Date(bk.date+'T12:00:00'))} · {bk.time}</div></div>
+                  </div>
+                </div>
+              )
+            })}
+          </div>
+        </div>
+      )}
+
+      {user.role==='admin'&&(
+        <button className="prof-admin-btn" onClick={onAdmin}>
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
+          Admin Panel
+        </button>
+      )}
+
+      <button className="prof-logout" onClick={onLogout}>Log Out</button>
+    </div>
+  )
+}
+
+// ══════════════════════════════════════════════════════
+// ADMIN PANEL
+// ══════════════════════════════════════════════════════
+
+const BLANK_CLS={time:'',name:'',duration:60,type:'mma',audience:'All levels welcome',compTeam:false,compTagline:''}
+
+function AdminPanel({onBack}){
+  const[sec,setSec]=useState('schedule')
+  const[sched,setSched]=useState(getSchedule)
+  const[editDay,setEditDay]=useState(DAYS[0])
+  const[editCls,setEditCls]=useState(null)
+
+  function openEditCls(cls,idx){setEditCls({item:{...cls},isNew:false,idx})}
+  function openNewCls(){setEditCls({item:{...BLANK_CLS},isNew:true,idx:-1})}
+  function saveCls(){
+    const s={...sched};const list=[...(s[editDay]||[])]
+    if(editCls.isNew)list.push(editCls.item);else list[editCls.idx]=editCls.item
+    s[editDay]=list;saveSchedule(s);setSched(s);setEditCls(null)
+  }
+  function delCls(){
+    if(!window.confirm('Delete this class?'))return
+    const s={...sched};s[editDay]=(s[editDay]||[]).filter((_,i)=>i!==editCls.idx)
+    saveSchedule(s);setSched(s);setEditCls(null)
+  }
+  function setClsF(k,v){setEditCls(p=>({...p,item:{...p.item,[k]:v}}))}
+
+  const bookings=getBookings()
+  const instMap=Object.fromEntries(PRIV_INSTRUCTORS.map(i=>[i.id,i]))
+
+  return(
+    <div className="admin-wrap">
+      <div className="admin-hdr">
+        <button className="admin-back" onClick={onBack}><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><polyline points="15 18 9 12 15 6"/></svg>Back</button>
+        <span className="admin-htitle">ADMIN PANEL</span>
+      </div>
+      <div className="admin-tabs">
+        {[['schedule','Schedule'],['bookings','Bookings']].map(([k,l])=>(
+          <button key={k} className={`admin-tab${sec===k?' on':''}`} onClick={()=>setSec(k)}>{l}</button>
+        ))}
+      </div>
+      <div className="admin-content">
+
+        {sec==='schedule'&&(
+          <div>
+            <div style={{display:'flex',gap:6,overflowX:'auto',padding:'12px 12px 4px'}}>
+              {DAYS.map(d=>(
+                <button key={d} onClick={()=>setEditDay(d)} style={{flexShrink:0,padding:'7px 13px',borderRadius:20,fontSize:12,fontWeight:700,letterSpacing:.5,textTransform:'uppercase',background:editDay===d?'var(--adim)':'var(--card)',color:editDay===d?'var(--accent)':'var(--t3)',border:`1px solid ${editDay===d?'var(--aglow)':'var(--bsub)'}`,cursor:'pointer'}}>
+                  {d.slice(0,3)}
+                </button>
+              ))}
+            </div>
+            <div className="admin-list-wrap">
+              <div className="admin-day-hdr">{editDay}</div>
+              {(sched[editDay]||[]).map((cls,i)=>(
+                <div key={i} style={{marginBottom:2}} onClick={()=>openEditCls(cls,i)}>
+                  <div className="admin-item">
+                    <div style={{width:8,height:8,borderRadius:'50%',background:CT[cls.type]?.c||'#666',flexShrink:0}}/>
+                    <div className="ai-info"><div className="ai-name">{cls.name}</div><div className="ai-sub">{cls.time} · {cls.duration}m · {CT[cls.type]?.label}</div></div>
+                    <div className="ai-edit"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg></div>
+                  </div>
+                </div>
+              ))}
+              <button className="add-item-btn" onClick={openNewCls}><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>Add Class</button>
+            </div>
+          </div>
+        )}
+
+        {sec==='bookings'&&(
+          <div style={{padding:'12px'}}>
+            <div className="admin-day-hdr">All Private Lesson Bookings</div>
+            {bookings.length===0&&<div style={{color:'var(--t3)',fontSize:13,fontStyle:'italic',padding:'8px 4px'}}>No bookings yet.</div>}
+            {bookings.sort((a,b)=>a.date.localeCompare(b.date)).map(bk=>{
+              const member=getUserById(bk.userId)
+              const inst=instMap[bk.instructorId]
+              return(
+                <div key={bk.id} className="bk-admin-card">
+                  {member&&<div className="bk-av" style={{background:member.accent}}>{member.initials}</div>}
+                  <div className="bk-main"><div className="bk-member">{member?.name||'Unknown'}</div><div className="bk-details">with {bk.instructorName} · {fmtDateDisplay(new Date(bk.date+'T12:00:00'))} · {bk.time}</div></div>
+                  <div className="bk-status confirmed">{bk.status}</div>
+                </div>
+              )
+            })}
+          </div>
+        )}
+
+      </div>
+
+      {editCls&&(
+        <div className="form-overlay" onClick={e=>e.target===e.currentTarget&&setEditCls(null)}>
+          <div className="form-sheet">
+            <div className="form-drag"/>
+            <div className="form-title">{editCls.isNew?'Add Class':'Edit Class'}</div>
+            <div className="form-group"><label className="form-label">Class Name</label><input className="form-input" value={editCls.item.name} onChange={e=>setClsF('name',e.target.value)} placeholder="e.g. BJJ Foundations"/></div>
+            <div className="form-group"><label className="form-label">Time</label><input className="form-input" value={editCls.item.time} onChange={e=>setClsF('time',e.target.value)} placeholder="e.g. 7:30 PM"/></div>
+            <div className="form-group"><label className="form-label">Duration (minutes)</label><input className="form-input" type="number" value={editCls.item.duration} onChange={e=>setClsF('duration',Number(e.target.value))}/></div>
+            <div className="form-group"><label className="form-label">Type</label>
+              <select className="form-select" value={editCls.item.type} onChange={e=>setClsF('type',e.target.value)}>
+                {Object.entries(CT).map(([k,v])=><option key={k} value={k}>{v.label}</option>)}
+              </select>
+            </div>
+            <div className="form-group"><label className="form-label">Who It's For</label><input className="form-input" value={editCls.item.audience} onChange={e=>setClsF('audience',e.target.value)}/></div>
+            <div className="form-toggle-row"><span className="form-toggle-lbl">Competition Team Class</span><button className={`form-toggle${editCls.item.compTeam?' on':' off'}`} onClick={()=>setClsF('compTeam',!editCls.item.compTeam)}/></div>
+            {editCls.item.compTeam&&<div className="form-group"><label className="form-label">Comp Tagline</label><input className="form-input" value={editCls.item.compTagline||''} onChange={e=>setClsF('compTagline',e.target.value)}/></div>}
+            <div className="form-btns">
+              {!editCls.isNew&&<button className="form-del" onClick={delCls}>Delete</button>}
+              <button className="form-cancel" onClick={()=>setEditCls(null)}>Cancel</button>
+              <button className="form-save" onClick={saveCls}>Save</button>
+            </div>
+          </div>
+        </div>
+      )}
+
+    </div>
+  )
+}
+
+// ══════════════════════════════════════════════════════
+// APP
+// ══════════════════════════════════════════════════════
+
+const TABS=[
+  {id:'schedule',     lbl:'Schedule',ico:<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>},
+  {id:'announcements',lbl:'Updates', ico:<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>},
+  {id:'programs',     lbl:'Programs',ico:<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"/><polygon points="10 8 16 12 10 16 10 8"/></svg>},
+  {id:'privates',     lbl:'Privates',ico:<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>},
+  {id:'profile',      lbl:'Profile',  ico:<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>},
+]
+const TITLES={schedule:'Schedule',announcements:'Updates',programs:'Programs',privates:'Privates',profile:'Profile'}
+
+function App(){
+  useEffect(()=>initData(),[])
+
+  const[user,setUser]=useState(()=>{
+    try{
+      const id=localStorage.getItem('mma_uid')
+      if(!id)return null
+      // re-read from storage so registered users are found
+      const users=ld('mma_users',SEED_USERS)
+      return users.find(u=>u.id===id)??null
+    }catch{return null}
+  })
+
+  const[tab,setTab]=useState('schedule')
+  const[showAdmin,setShowAdmin]=useState(false)
+
+  function login(u){
+    localStorage.setItem('mma_uid',u.id)
+    setUser(u)
+  }
+  function logout(){
+    localStorage.removeItem('mma_uid')
+    setUser(null)
+    setTab('schedule')
+  }
+
+  if(!user)return <LoginScreen onLogin={login}/>
+  if(showAdmin)return <AdminPanel onBack={()=>setShowAdmin(false)}/>
+
+  return(
+    <div className="app">
+      <header className="hdr">
+        <div className="hdr-inner">
+          <div className="logo">
+            <img className="logo-m" src="data:image/jpeg;base64,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" alt="Momentum Martial Arts" />
+            <div className="logo-txt"><span className="logo-top">MOMENTUM</span><span className="logo-bot">MARTIAL ARTS · RENO, NV</span></div>
+          </div>
+          <span className="pg-title">{TITLES[tab]}</span>
+        </div>
+      </header>
+      <main className="main">
+        {tab==='schedule'      &&<SchedulePage user={user}/>}
+        {tab==='announcements' &&<FeedPage user={user}/>}
+        {tab==='programs'      &&<ProgramsPage/>}
+        {tab==='privates'      &&<PrivatePage user={user}/>}
+        {tab==='profile'       &&<ProfilePage user={user} onLogout={logout} onAdmin={()=>setShowAdmin(true)}/>}
+      </main>
+      <nav className="bnav">
+        {TABS.map(t=>(
+          <button key={t.id} className={`ntab${tab===t.id?' on':''}`} onClick={()=>setTab(t.id)}>
+            {t.ico}<span className="nlbl">{t.lbl}</span>
+            {tab===t.id&&<span className="nind"/>}
+          </button>
+        ))}
+      </nav>
+    </div>
+  )
+}
+
+ReactDOM.createRoot(document.getElementById('root')).render(<App/>)
+</script>
+</body>
+</html>
